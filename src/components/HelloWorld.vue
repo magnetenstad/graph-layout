@@ -1,16 +1,10 @@
-<script setup lang="ts">
-import { ref } from 'vue'
-
-defineProps<{ msg: string }>()
-
-const count = ref(0)
-</script>
-
 <template>
   <h1>{{ msg }}</h1>
 
   <div class="card">
-    <button type="button" @click="count++">count is {{ count }}</button>
+    <button type="button" @click="hwStore.add()">
+      count is {{ hwStore.counter }}
+    </button>
     <p>
       Edit
       <code>components/HelloWorld.vue</code> to test HMR
@@ -30,6 +24,14 @@ const count = ref(0)
   </p>
   <p class="read-the-docs">Click on the Vite and Vue logos to learn more</p>
 </template>
+
+<script setup lang="ts">
+import { useHelloWorldStore } from '../stores/helloWorld'
+
+defineProps<{ msg: string }>()
+
+const hwStore = useHelloWorldStore()
+</script>
 
 <style scoped>
 .read-the-docs {
