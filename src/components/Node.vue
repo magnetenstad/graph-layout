@@ -2,7 +2,7 @@
   <div
     class="node"
     :style="rectStyle"
-    @mousedown="startMove"
+    @mousedown="isSelected ? startMove($event) : undefined"
     @click="emit('click', $event)"
   >
     <svg :width="rectStyle.width" :height="rectStyle.height">
