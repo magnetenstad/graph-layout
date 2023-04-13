@@ -19,7 +19,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, onMounted } from 'vue'
 import { Graph } from '../stores/graph'
 import Node from './Node.vue'
 
@@ -83,6 +83,57 @@ const paths = computed(() =>
     }
   })
 )
+
+onMounted(() => {
+  const edgeLen = 300
+  const edgeFactor = 0.01
+  const chargeFactor = 5000
+
+  const step = () => {
+    for (const nodeA of props.graph.nodes) {
+      for (const nodeB of props.graph.nodes) {
+        if (nodeA === nodeB) continue
+        if (nodeA === props.graph.selectedNode) continue
+
+        const distance = Math.sqrt(
+          Math.pow(nodeB.rect.left - nodeA.rect.left, 2) +
+            Math.pow(nodeB.rect.top - nodeA.rect.top, 2)
+        )
+        const direction = Math.atan2(
+          nodeB.rect.top - nodeA.rect.top,
+          nodeB.rect.left - nodeA.rect.left
+        )
+
+        if (
+          props.graph.edges.find(
+            (edge) =>
+              (edge.from === nodeA && edge.to === nodeB) ||
+              (edge.from === nodeB && edge.to === nodeA)
+          )
+        ) {
+          nodeA.speed.x +=
+            (distance - edgeLen) * edgeFactor * Math.cos(direction)
+          nodeA.speed.y +=
+            (distance - edgeLen) * edgeFactor * Math.sin(direction)
+        }
+
+        const chargeAccX =
+          (Math.cos(direction) * chargeFactor) / Math.pow(distance, 2)
+        nodeA.speed.x -= isNaN(chargeAccX) ? 0 : chargeAccX
+        const chargeAccY =
+          (Math.sin(direction) * chargeFactor) / Math.pow(distance, 2)
+        nodeA.speed.y -= isNaN(chargeAccY) ? 0 : chargeAccY
+      }
+
+      nodeA.rect.left += nodeA.speed.x
+      nodeA.rect.top += nodeA.speed.y
+      nodeA.speed.x *= 0.95
+      nodeA.speed.y *= 0.95
+    }
+    requestAnimationFrame(step)
+  }
+  step()
+})
 </script>
 
 <style scoped>
