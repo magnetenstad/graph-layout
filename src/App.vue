@@ -1,5 +1,5 @@
 <template>
-  <Canvas :nodes="store.nodes" msg="Vite + Vue" />
+  <Canvas :graph="store.graph" msg="Vite + Vue" />
 </template>
 
 <script setup lang="ts">
