@@ -151,7 +151,7 @@ onMounted(() => {
 .canvasWrapper {
   position: relative;
   width: 90vw;
-  height: 90vh;
+  height: 70vh;
   margin: auto;
   border-radius: 1em;
   background-color: #ffffff0f;

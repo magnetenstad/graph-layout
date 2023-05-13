@@ -26,23 +26,26 @@ export type Graph = {
   selectedNode: GraphNode | null
 }
 
-const newNode = (x: number, y: number) => ({
-  id: '0',
-  content: 'Hello World!',
-  rect: {
-    top: x,
-    left: y,
-    width: 50 + Math.random() * 50,
-    height: 50 + Math.random() * 50,
-  },
-  speed: { x: 0, y: 0 },
-})
+const newNode = (x: number, y: number) => {
+  const size = 30 + Math.random() * 30
+  return {
+    id: '0',
+    content: 'Hello World!',
+    rect: {
+      top: x - size / 2,
+      left: y - size / 2,
+      width: size,
+      height: size,
+    },
+    speed: { x: 0, y: 0 },
+  }
+}
 
 const newEdge = (fromNode: GraphNode, toNode: GraphNode): GraphEdge => ({
   type: 'directed',
   from: fromNode,
   to: toNode,
-  length: 200 + Math.random() * 200,
+  length: 100 + Math.random() * 200,
 })
 
 export const useGraphStore = defineStore('helloWorld', {
