@@ -85,8 +85,9 @@ const paths = computed(() =>
   })
 )
 
-const edgeFactor = 0.01
-const chargeFactor = 5000
+const edgeFactor = 0.006
+const chargeFactor = 6000
+const damping = 0.92
 
 onMounted(() => {
   const step = () => {
@@ -126,8 +127,8 @@ onMounted(() => {
 
       nodeA.rect.left += nodeA.speed.x
       nodeA.rect.top += nodeA.speed.y
-      nodeA.speed.x *= 0.95
-      nodeA.speed.y *= 0.95
+      nodeA.speed.x *= damping
+      nodeA.speed.y *= damping
     }
     requestAnimationFrame(step)
   }
