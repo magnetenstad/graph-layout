@@ -9,6 +9,13 @@
       }
     "
     @click="emit('click', $event)"
+    @touchstart="
+      (e) => {
+        emit('mousedown', e)
+        startMove(e)
+      }
+    "
+    @touchend="emit('click', $event)"
   >
     <svg :width="rectStyle.width" :height="rectStyle.height">
       <rect
@@ -28,8 +35,8 @@ import { GraphNode } from '../stores/graph'
 
 const props = defineProps<{ node: GraphNode; isSelected: boolean }>()
 const emit = defineEmits<{
-  (e: 'click', event: MouseEvent): void
-  (e: 'mousedown', event: MouseEvent): void
+  (e: 'click', event: MouseEvent | TouchEvent): void
+  (e: 'mousedown', event: MouseEvent | TouchEvent): void
 }>()
 
 const rectStyle = computed(() => ({
@@ -39,11 +46,18 @@ const rectStyle = computed(() => ({
   height: props.node.rect.height + 'px',
 }))
 
-const getDeltaMousePosition = (ev: MouseEvent, startX = 0, startY = 0) => {
+const getDeltaMousePosition = (
+  ev: MouseEvent | TouchEvent,
+  startX = 0,
+  startY = 0
+) => {
+  if (ev instanceof TouchEvent) {
+    return [ev.touches[0].pageX - startX, ev.touches[0].pageY - startY]
+  }
   return [ev.pageX - startX, ev.pageY - startY]
 }
 
-const startMove = (ev: MouseEvent) => {
+const startMove = (ev: MouseEvent | TouchEvent) => {
   const [startX, startY] = getDeltaMousePosition(ev)
   const { top, left } = props.node.rect
 
