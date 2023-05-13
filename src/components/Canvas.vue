@@ -84,11 +84,10 @@ const paths = computed(() =>
   })
 )
 
-onMounted(() => {
-  const edgeLen = 300
-  const edgeFactor = 0.01
-  const chargeFactor = 5000
+const edgeFactor = 0.01
+const chargeFactor = 5000
 
+onMounted(() => {
   const step = () => {
     for (const nodeA of props.graph.nodes) {
       for (const nodeB of props.graph.nodes) {
@@ -104,17 +103,16 @@ onMounted(() => {
           nodeB.rect.left - nodeA.rect.left
         )
 
-        if (
-          props.graph.edges.find(
-            (edge) =>
-              (edge.from === nodeA && edge.to === nodeB) ||
-              (edge.from === nodeB && edge.to === nodeA)
-          )
-        ) {
+        const edge = props.graph.edges.find(
+          (edge) =>
+            (edge.from === nodeA && edge.to === nodeB) ||
+            (edge.from === nodeB && edge.to === nodeA)
+        )
+        if (edge) {
           nodeA.speed.x +=
-            (distance - edgeLen) * edgeFactor * Math.cos(direction)
+            (distance - edge.length) * edgeFactor * Math.cos(direction)
           nodeA.speed.y +=
-            (distance - edgeLen) * edgeFactor * Math.sin(direction)
+            (distance - edge.length) * edgeFactor * Math.sin(direction)
         }
 
         const chargeAccX =

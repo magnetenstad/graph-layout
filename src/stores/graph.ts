@@ -1,4 +1,4 @@
-import { defineStore } from 'pinia'
+import { defineStore, acceptHMRUpdate } from 'pinia'
 
 export type Rect = { left: number; top: number; width: number; height: number }
 
@@ -15,6 +15,7 @@ export type GraphEdge = {
   type: 'directed' | 'undirected'
   from: GraphNode
   to: GraphNode
+  length: number
 }
 
 export type Graph = {
@@ -25,41 +26,77 @@ export type Graph = {
   selectedNode: GraphNode | null
 }
 
-const initNode = (x: number, y: number) => ({
+const newNode = (x: number, y: number) => ({
   id: '0',
   content: 'Hello World!',
   rect: {
     top: x,
     left: y,
-    width: 100,
-    height: 100,
+    width: 50 + Math.random() * 50,
+    height: 50 + Math.random() * 50,
   },
   speed: { x: 0, y: 0 },
 })
 
+const newEdge = (fromNode: GraphNode, toNode: GraphNode): GraphEdge => ({
+  type: 'directed',
+  from: fromNode,
+  to: toNode,
+  length: 200 + Math.random() * 200,
+})
+
 export const useGraphStore = defineStore('helloWorld', {
   state: () => {
-    const nodeA = initNode(10, 10)
-    const nodeB = initNode(10, 300)
-    const nodeC = initNode(300, 10)
-    const nodeD = initNode(400, 400)
-    const nodeE = initNode(600, 200)
     return {
       graph: {
         width: 900,
-        height: 700,
-        nodes: [nodeA, nodeB, nodeC, nodeD, nodeE],
-        edges: [
-          { type: 'directed', from: nodeA, to: nodeB },
-          { type: 'directed', from: nodeA, to: nodeC },
-          { type: 'directed', from: nodeA, to: nodeD },
-          { type: 'directed', from: nodeA, to: nodeE },
-          { type: 'directed', from: nodeD, to: nodeE },
-        ],
+        height: 900,
+        nodes: [],
+        edges: [],
         selectedNode: null,
-      } satisfies Graph,
+      } as Graph,
     }
   },
 
-  actions: {},
+  actions: {
+    addRandomNode() {
+      this.graph.nodes.push(
+        newNode(
+          Math.random() * this.graph.width,
+          Math.random() * this.graph.height
+        )
+      )
+    },
+    addRandomEdge(): void {
+      const nodes = this.graph.nodes
+      const edges = this.graph.edges
+      if (nodes.length < 2) return
+      if (edges.length >= (nodes.length * (nodes.length - 1)) / 2) {
+        console.error('Graph is fully saturated!')
+        return
+      }
+
+      const fromNode =
+        this.graph.selectedNode ??
+        nodes[Math.floor(Math.random() * nodes.length)]
+      const toNode = nodes[Math.floor(Math.random() * nodes.length)]
+
+      if (fromNode === toNode) return this.addRandomEdge()
+      if (
+        edges.find(
+          (edge) =>
+            (edge.from == fromNode && edge.to == toNode) ||
+            (edge.from == toNode && edge.to == fromNode)
+        )
+      )
+        return this.addRandomEdge()
+
+      edges.push(newEdge(fromNode, toNode))
+    },
+  },
 })
+
+if (import.meta.hot) {
+  // @ts-ignore
+  import.meta.hot.accept(acceptHMRUpdate(useGraphStore, import.meta.hot))
+}
