@@ -61,7 +61,7 @@ const startMove = (ev: MouseEvent | TouchEvent) => {
   const [startX, startY] = getDeltaMousePosition(ev)
   const { top, left } = props.node.rect
 
-  const onMove = (ev: MouseEvent) => {
+  const onMove = (ev: MouseEvent | TouchEvent) => {
     const [dx, dy] = getDeltaMousePosition(ev, startX, startY)
     props.node.rect.top = top + dy
     props.node.rect.left = left + dx
@@ -70,13 +70,13 @@ const startMove = (ev: MouseEvent | TouchEvent) => {
   const onMoveEnd = () => {
     window.removeEventListener('mousemove', onMove)
     window.removeEventListener('mouseup', onMoveEnd)
-    window.removeEventListener('touchmove', onMoveEnd)
+    window.removeEventListener('touchmove', onMove)
     window.removeEventListener('touchend', onMoveEnd)
   }
 
   window.addEventListener('mousemove', onMove)
   window.addEventListener('mouseup', onMoveEnd)
-  window.addEventListener('touchmove', onMoveEnd)
+  window.addEventListener('touchmove', onMove)
   window.addEventListener('touchend', onMoveEnd)
 }
 </script>

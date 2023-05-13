@@ -1,5 +1,5 @@
 <template>
-  <div class="canvas" :style="style">
+  <div ref="canvasWrapper" class="canvasWrapper">
     <Node
       v-for="node in graph.nodes"
       :node="node"
@@ -20,14 +20,25 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { Graph } from '../stores/graph'
 import Node from './Node.vue'
 
-const style = computed(() => ({
-  width: props.graph.width + 'px',
-  height: props.graph.height + 'px',
-}))
+const canvasWrapper = ref<HTMLDivElement | null>(null)
+
+const adjustGraphSize = () => {
+  props.graph.width =
+    canvasWrapper.value?.getBoundingClientRect().width || props.graph.width
+  props.graph.height =
+    canvasWrapper.value?.getBoundingClientRect().height || props.graph.height
+}
+
+onMounted(() => {
+  adjustGraphSize()
+  window.addEventListener('resize', () => {
+    adjustGraphSize()
+  })
+})
 
 const props = defineProps<{ graph: Graph }>()
 
@@ -137,9 +148,9 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.canvas {
+.canvasWrapper {
   position: relative;
-  width: 70vw;
+  width: 90vw;
   height: 90vh;
   margin: auto;
   border-radius: 1em;

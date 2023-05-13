@@ -1,10 +1,12 @@
 <template>
-  <div class="row">
-    <button @click="store.addRandomNode">Add random node</button>
-    <button @click="store.addRandomEdge">Add random edge</button>
-    <button @click="store.$reset">Reset</button>
+  <div class="app">
+    <div class="row">
+      <button @click="store.addRandomNode">Add random node</button>
+      <button @click="store.addRandomEdge">Add random edge</button>
+      <button @click="store.$reset">Reset</button>
+    </div>
+    <Canvas :graph="store.graph" msg="Vite + Vue" />
   </div>
-  <Canvas :graph="store.graph" msg="Vite + Vue" />
 </template>
 
 <script setup lang="ts">
@@ -21,5 +23,8 @@ const store = useGraphStore()
   align-items: center;
   gap: 1em;
   margin: 1em;
+}
+.app {
+  overflow: hidden;
 }
 </style>
