@@ -70,10 +70,14 @@ const startMove = (ev: MouseEvent | TouchEvent) => {
   const onMoveEnd = () => {
     window.removeEventListener('mousemove', onMove)
     window.removeEventListener('mouseup', onMoveEnd)
+    window.removeEventListener('touchmove', onMoveEnd)
+    window.removeEventListener('touchend', onMoveEnd)
   }
 
   window.addEventListener('mousemove', onMove)
   window.addEventListener('mouseup', onMoveEnd)
+  window.addEventListener('touchmove', onMoveEnd)
+  window.addEventListener('touchend', onMoveEnd)
 }
 </script>
 
