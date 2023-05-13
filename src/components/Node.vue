@@ -4,10 +4,11 @@
     :style="rectStyle"
     @mousedown="
       (e) => {
-        emit('click', e)
+        emit('mousedown', e)
         startMove(e)
       }
     "
+    @click="emit('click', $event)"
   >
     <svg :width="rectStyle.width" :height="rectStyle.height">
       <rect
@@ -28,6 +29,7 @@ import { GraphNode } from '../stores/graph'
 const props = defineProps<{ node: GraphNode; isSelected: boolean }>()
 const emit = defineEmits<{
   (e: 'click', event: MouseEvent): void
+  (e: 'mousedown', event: MouseEvent): void
 }>()
 
 const rectStyle = computed(() => ({

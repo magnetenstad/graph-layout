@@ -4,6 +4,7 @@
       v-for="node in graph.nodes"
       :node="node"
       :is-selected="node === graph.selectedNode"
+      @mousedown="graph.selectedNode = node"
       @click="graph.selectedNode = node === graph.selectedNode ? null : node"
     ></Node>
     <svg :width="graph.width" :height="graph.height">
