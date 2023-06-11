@@ -3,14 +3,14 @@
     class="node"
     :style="rectStyle"
     @mousedown="
-      (e) => {
+      (e: MouseEvent) => {
         emit('mousedown', e)
         startMove(e)
       }
     "
     @click="emit('click', $event)"
     @touchstart="
-      (e) => {
+      (e: TouchEvent) => {
         emit('mousedown', e)
         startMove(e)
       }

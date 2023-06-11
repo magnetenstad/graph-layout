@@ -9,7 +9,7 @@
     ></Node>
     <svg :width="graph.width" :height="graph.height">
       <path
-        v-for="path in paths"
+        v-for="path in paths.flatMap((p) => p)"
         :d="path.d"
         stroke="orange"
         stroke-width="5"
@@ -44,55 +44,34 @@ const props = defineProps<{ graph: Graph }>()
 
 const paths = computed(() =>
   props.graph.edges.map((edge) => {
-    let startX = edge.from.rect.left + edge.from.rect.width / 2
-    let startY = edge.from.rect.top + edge.from.rect.height / 2
-    let startControlX = startX
-    let startControlY = startY
+    const startX = edge.from.rect.left + edge.from.rect.width / 2
+    const startY = edge.from.rect.top + edge.from.rect.height / 2
     let endX = edge.to.rect.left + edge.to.rect.width / 2
     let endY = edge.to.rect.top + edge.to.rect.height / 2
-    let endControlX = endX
-    let endControlY = endY
-    const maxLen = Math.max(
-      Math.abs(edge.from.rect.top - edge.to.rect.top),
-      Math.abs(edge.from.rect.left - edge.to.rect.left)
-    )
-    const lenFactor = maxLen / 200
-    if (
-      Math.abs(edge.from.rect.top - edge.to.rect.top) >
-      Math.abs(edge.from.rect.left - edge.to.rect.left)
-    ) {
-      if (edge.from.rect.top < edge.to.rect.top) {
-        // dir = 'down'
-        startY += edge.from.rect.height / 2
-        startControlY = startY + edge.from.rect.height * lenFactor
-        endY -= edge.to.rect.height / 2
-        endControlY = endY - edge.to.rect.height * lenFactor
-      } else {
-        // dir = 'up'
-        startY -= edge.from.rect.height / 2
-        startControlY = startY - edge.from.rect.height * lenFactor
-        endY += edge.to.rect.height / 2
-        endControlY = endY + edge.to.rect.height * lenFactor
-      }
-    } else {
-      if (edge.from.rect.left < edge.to.rect.left) {
-        // dir = 'right'
-        startX += edge.from.rect.width / 2
-        startControlX = startX + edge.from.rect.width * lenFactor
-        endX -= edge.to.rect.width / 2
-        endControlX = endX - edge.to.rect.width * lenFactor
-      } else {
-        // dir = 'left'
-        startX -= edge.from.rect.width / 2
-        startControlX = startX - edge.from.rect.width * lenFactor
-        endX += edge.to.rect.width / 2
-        endControlX = endX + edge.to.rect.width * lenFactor
-      }
-    }
 
-    return {
-      d: `M ${startX} ${startY} C ${startControlX} ${startControlY} ${endControlX} ${endControlY} ${endX} ${endY}`,
-    }
+    const angle = Math.atan2(endY - startY, endX - startX)
+    const length = Math.sqrt(
+      Math.pow(endX - startX, 2) + Math.pow(endY - startY, 2)
+    )
+
+    endX = startX + (length - 40) * Math.cos(angle)
+    endY = startY + (length - 40) * Math.sin(angle)
+
+    const rAngle = angle + 15
+    const lAngle = angle - 15
+    const arrLength = 25
+    const arrRX = endX + arrLength * Math.cos(rAngle)
+    const arrRY = endY + arrLength * Math.sin(rAngle)
+    const arrLX = endX + arrLength * Math.cos(lAngle)
+    const arrLY = endY + arrLength * Math.sin(lAngle)
+    return [
+      {
+        d: `M ${startX} ${startY} ${endX} ${endY}`,
+      },
+      {
+        d: `M ${arrRX} ${arrRY} ${endX} ${endY} ${arrLX} ${arrLY}`,
+      },
+    ]
   })
 )
 
@@ -143,7 +122,7 @@ onMounted(() => {
     }
     requestAnimationFrame(step)
   }
-  step()
+  // step()
 })
 </script>
 
