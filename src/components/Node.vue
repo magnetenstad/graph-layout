@@ -2,6 +2,7 @@
   <div
     class="node"
     :style="rectStyle"
+    :class="{ selected: isSelected }"
     @mousedown="
       (e: MouseEvent) => {
         emit('mousedown', e)
@@ -16,17 +17,7 @@
       }
     "
     @touchend="emit('click', $event)"
-  >
-    <svg :width="rectStyle.width" :height="rectStyle.height">
-      <rect
-        :width="rectStyle.width"
-        :height="rectStyle.height"
-        :stroke="isSelected ? 'white' : 'black'"
-        fill="transparent"
-        stroke-width="5"
-      />
-    </svg>
-  </div>
+  ></div>
 </template>
 
 <script setup lang="ts">
@@ -89,5 +80,9 @@ const startMove = (ev: MouseEvent | TouchEvent) => {
   border-radius: 0.5em;
   background-color: #444444;
   box-shadow: 0em 0.5em 1em #151515;
+
+  &.selected {
+    border: 3px solid white;
+  }
 }
 </style>
