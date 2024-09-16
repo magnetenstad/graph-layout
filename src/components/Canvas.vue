@@ -5,7 +5,6 @@
       :node="node"
       :is-selected="node === graph.selectedNode"
       @mousedown="graph.selectedNode = node"
-      @click="graph.selectedNode = node === graph.selectedNode ? null : node"
     ></Node>
     <svg :width="graph.width" :height="graph.height">
       <path
@@ -77,10 +76,30 @@ const paths = computed(() =>
 
 const edgeFactor = 0.006
 const chargeFactor = 6000
+const centerChargeFactor = 0.00003
 const damping = 0.92
 
 onMounted(() => {
   const step = () => {
+    const selected = props.graph.selectedNode
+    if (selected) {
+      const distance = Math.sqrt(
+        Math.pow(props.graph.width / 2 - selected.rect.left, 2) +
+          Math.pow(props.graph.height / 2 - selected.rect.top, 2)
+      )
+      const direction = Math.atan2(
+        props.graph.height / 2 - selected.rect.top,
+        props.graph.width / 2 - selected.rect.left
+      )
+
+      const chargeAccX =
+        Math.cos(direction) * centerChargeFactor * Math.pow(distance, 2)
+      selected.speed.x += isNaN(chargeAccX) ? 0 : chargeAccX
+      const chargeAccY =
+        Math.sin(direction) * centerChargeFactor * Math.pow(distance, 2)
+      selected.speed.y += isNaN(chargeAccY) ? 0 : chargeAccY
+    }
+
     for (const nodeA of props.graph.nodes) {
       for (const nodeB of props.graph.nodes) {
         if (nodeA === nodeB) continue
@@ -122,7 +141,7 @@ onMounted(() => {
     }
     requestAnimationFrame(step)
   }
-  // step()
+  step()
 })
 </script>
 

@@ -1,4 +1,4 @@
-import { defineStore, acceptHMRUpdate } from 'pinia'
+import { acceptHMRUpdate, defineStore } from 'pinia'
 
 export type Rect = { left: number; top: number; width: number; height: number }
 
@@ -63,12 +63,14 @@ export const useGraphStore = defineStore('helloWorld', {
 
   actions: {
     addRandomNode() {
-      this.graph.nodes.push(
-        newNode(
-          Math.random() * this.graph.width,
-          Math.random() * this.graph.height
-        )
+      const node = newNode(
+        Math.random() * this.graph.width,
+        Math.random() * this.graph.height
       )
+      this.graph.nodes.push(node)
+      if (this.graph.nodes.length == 1) {
+        this.graph.selectedNode = node
+      }
     },
     addRandomEdge(): void {
       const nodes = this.graph.nodes
