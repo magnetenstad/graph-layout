@@ -76,7 +76,7 @@ const paths = computed(() =>
 
 const edgeFactor = 0.006
 const chargeFactor = 6000
-const centerChargeFactor = 0.00003
+const centerChargeFactor = 0.05
 const damping = 0.92
 
 onMounted(() => {
@@ -91,16 +91,21 @@ onMounted(() => {
         props.graph.height / 2 - selected.rect.top,
         props.graph.width / 2 - selected.rect.left
       )
-
-      const chargeAccX =
-        Math.cos(direction) * centerChargeFactor * Math.pow(distance, 2)
-      selected.speed.x += isNaN(chargeAccX) ? 0 : chargeAccX
-      const chargeAccY =
-        Math.sin(direction) * centerChargeFactor * Math.pow(distance, 2)
-      selected.speed.y += isNaN(chargeAccY) ? 0 : chargeAccY
+      if (distance > 5) {
+        const chargeAccX =
+          Math.cos(direction) * centerChargeFactor * Math.sqrt(distance)
+        selected.speed.x += isNaN(chargeAccX) ? 0 : chargeAccX
+        const chargeAccY =
+          Math.sin(direction) * centerChargeFactor * Math.sqrt(distance)
+        selected.speed.y += isNaN(chargeAccY) ? 0 : chargeAccY
+      }
     }
 
     for (const nodeA of props.graph.nodes) {
+      if (nodeA.locked) {
+        continue
+      }
+
       for (const nodeB of props.graph.nodes) {
         if (nodeA === nodeB) continue
         if (nodeA === props.graph.selectedNode) continue

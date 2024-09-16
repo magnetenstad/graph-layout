@@ -9,6 +9,7 @@ export type GraphNode = {
   content: string
   rect: Rect
   speed: { x: number; y: number }
+  locked: boolean
 }
 
 export type GraphEdge = {
@@ -26,7 +27,7 @@ export type Graph = {
   selectedNode: GraphNode | null
 }
 
-const newNode = (x: number, y: number) => {
+const newNode = (x: number, y: number): GraphNode => {
   const size = 30 + Math.random() * 30
   return {
     id: '0',
@@ -38,6 +39,7 @@ const newNode = (x: number, y: number) => {
       height: size,
     },
     speed: { x: 0, y: 0 },
+    locked: false,
   }
 }
 

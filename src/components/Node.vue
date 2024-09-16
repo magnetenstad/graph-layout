@@ -51,6 +51,7 @@ const getDeltaMousePosition = (
 const startMove = (ev: MouseEvent | TouchEvent) => {
   const [startX, startY] = getDeltaMousePosition(ev)
   const { top, left } = props.node.rect
+  props.node.locked = true
 
   const onMove = (ev: MouseEvent | TouchEvent) => {
     const [dx, dy] = getDeltaMousePosition(ev, startX, startY)
@@ -63,6 +64,9 @@ const startMove = (ev: MouseEvent | TouchEvent) => {
     window.removeEventListener('mouseup', onMoveEnd)
     window.removeEventListener('touchmove', onMove)
     window.removeEventListener('touchend', onMoveEnd)
+    props.node.locked = false
+    props.node.speed.x = 0
+    props.node.speed.y = 0
   }
 
   window.addEventListener('mousemove', onMove)
